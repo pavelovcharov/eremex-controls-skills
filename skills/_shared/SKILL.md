@@ -1,6 +1,6 @@
 ---
 name: eremex-controls-shared
-description: Shared concepts for ALL Eremex Avalonia controls — the namespace gotcha, class naming, theming via DeltaDesign/Fluent, pseudoclasses, localization, and where source/demos live. This skill should be used when a question is about Eremex controls in general (not one specific control), when resolving "which namespace" or "which using", when styling/theming any Eremex control, when adding a localization language, or when locating Eremex control source code or demo projects.
+description: Shared concepts for ALL Eremex Avalonia controls — the namespace gotcha, class naming, theming via DeltaDesign/Fluent, pseudoclasses, localization, and where docs/demos live. This skill should be used when a question is about Eremex controls in general (not one specific control), when resolving "which namespace" or "which using", when styling/theming any Eremex control, when adding a localization language, or when locating Eremex control demos and documentation.
 ---
 
 # Eremex controls — shared concepts
@@ -9,11 +9,10 @@ Cross-cutting facts that apply to every Eremex Avalonia control. Per-control ski
 
 ## Namespace gotcha (read this first)
 
-The **on-disk project path** and the **runtime namespace** do not match. This is the single most common mistake when writing `using` directives:
+The **NuGet package name** and the **runtime namespace** do not match. This is the single most common mistake when writing `using` directives:
 
 | What | Value |
 |------|-------|
-| Project / source folder | `Source/Eremex.Avalonia.Controls/...` |
 | NuGet package | `Eremex.Avalonia.Controls` |
 | **Runtime namespace** | **`Eremex.AvaloniaUI.Controls`** ← note `AvaloniaUI`, one word |
 
@@ -24,13 +23,17 @@ using Eremex.AvaloniaUI.Controls;          // MxMessageBox, MxTabControl, … an
 using Eremex.AvaloniaUI.Controls.Internal; // rare — only internal types (avoid)
 ```
 
-Always confirm the exact namespace from the control's source file before writing code. Enum types (`MessageBoxButtons`, `MessageBoxIcon`, `MessageBoxResult`, …) generally live in `Eremex.AvaloniaUI.Controls`.
+Always confirm the exact namespace from the official docs (`https://eremexcontrols.net/`) or the NuGet package (`https://www.nuget.org/packages/Eremex.Avalonia.Controls`) before writing code. Enum types (`MessageBoxButtons`, `MessageBoxIcon`, `MessageBoxResult`, …) generally live in `Eremex.AvaloniaUI.Controls`.
 
 ## Class naming
 
-- Public controls use the **`Mx` prefix**: `MxMessageBox`, `MxTabControl`, `MxTabItem`, `MxTextBlock`, `MxSplitButton`, `MxWindow`, …
-- Suffixes follow role: `…Control` (`DataGridControl`, `ListViewControl`, `PropertyGridControl`, `ToolbarControl`, `RibbonControl`), `…Editor` (`TextEditor`, `SpinEditor`, `ComboBoxEditor`, …), `…Base` for abstract bases.
-- When a user says "the Eremex message box" / "the grid" / "the docking manager", map to the `Mx`-prefixed class name.
+Eremex control names are **not uniform** — do not assume the `Mx` prefix. Three patterns coexist, and which one a control uses is not predictable:
+
+- **`Mx` prefix** — e.g. `MxMessageBox`, `MxWindow`, `MxTextBlock`, `MxTabControl`, `MxTabItem`, `MxSplitButton`.
+- **Role suffix, no `Mx`** — `…Control` (`DataGridControl`, `ListViewControl`, `PropertyGridControl`, `ToolbarControl`, `RibbonControl`), `…Editor` (`TextEditor`, `SpinEditor`, `ComboBoxEditor`), `…Manager` (`DockManager`), and similar.
+- **`…Base`** — abstract base classes.
+
+When a user says "the Eremex message box" / "the grid" / "the docking manager", map to the real class name — `MxMessageBox`, `DataGridControl`, `DockManager` respectively (note that only the first one carries the `Mx` prefix). Always confirm the exact name from the docs (`https://eremexcontrols.net/`) or the NuGet package (`https://www.nuget.org/packages/Eremex.Avalonia.Controls`) before writing code.
 
 ## Control base & styling
 
@@ -44,17 +47,20 @@ Always confirm the exact namespace from the control's source file before writing
 
 ## Localization
 
-- UI strings (button labels, built-in dialog text, etc.) come from `.resx` resource files, e.g. `Source/Eremex.Avalonia.Controls/Common/MessageBox/MessageWindow.resx` with culture-specific siblings `MessageWindow.ru.resx`, `MessageWindow.zh-Hans.resx`.
+- UI strings (button labels, built-in dialog text, etc.) come from `.resx` resource files shipped in the package, with culture-specific siblings (e.g. the Russian and Chinese Simplified resources).
 - The active culture follows the thread/UI culture. To switch language, set the thread culture (`CultureInfo.CurrentUICulture`) at startup before UI is constructed.
-- To add a language: copy the base `.resx`, name it `<File>.<culture>.resx` (e.g. `MessageWindow.fr.resx`), translate the values. The strongly-typed accessor (`*.Designer.cs`) picks up keys automatically.
+- To add a language for your own resources, follow the standard .resx satellite convention (e.g. `Resources.fr.resx`) and translate the values; the strongly-typed accessor (`*.Designer.cs`) picks up keys automatically. For built-in control strings, see the docs (`https://eremexcontrols.net/`).
 - The library ships several cultures out of the box (en, ru, zh-Hans, and more across the codebase).
 
-## Where to find source & demos
+## Where to look (public sources)
 
-- **Control source:** `d:\work\eremex\controls\Source\Eremex.Avalonia.Controls\` — organized by area: `Common/`, `Editors/`, `DataGrid/`, `Docking/`, `Bars/`, `PropertyGrid/`, `ListView/`, `TabControl/`, `Themes/`, …
-- **Contracts/enums:** `d:\work\eremex\controls\Source\Eremex.Common.Contracts\` (e.g. `ApplicationServices/` for MessageBox enums).
-- **Demo app:** `d:\work\eremex\controls-demo\` — runnable examples of controls in an app.
-- When unsure how a control behaves, read its source in `controls/` — that is ground truth. Prefer it over memory.
+The control source itself is not public. Verify behavior and API against these instead:
+
+- **Documentation:** `https://eremexcontrols.net/` — API reference and guides; ground truth for the public API.
+- **NuGet packages:** `https://www.nuget.org/packages/Eremex.Avalonia.Controls` — published assemblies and the contracts/enums they expose.
+- **Demo app:** `https://github.com/Eremex/controls-demo` — runnable examples of controls in a real app.
+- **Themes:** `https://github.com/Eremex/controlthemes` — the DeltaDesign / Fluent theme sources.
+- When unsure how a control behaves, check the docs or the NuGet package; prefer them over memory.
 
 ## Related skills
 

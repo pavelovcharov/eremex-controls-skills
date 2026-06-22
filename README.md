@@ -35,23 +35,23 @@ After enabling, restart Claude Code and mention a control by name — its skill 
 
 Keep future skills uniform. The recipe:
 
-1. **Folder.** Create `skills/<control-kebab-name>/` where the kebab name matches the class (`MxDataGrid` → `mx-datagrid`, `MxTabControl` → `mx-tab-control`). Underscore-prefixed names (`_shared`) are reserved for cross-cutting skills.
+1. **Folder.** Create `skills/<control-kebab-name>/` where the kebab name is a readable slug of the class (`MxTabControl` → `mx-tab-control`, `DataGridControl` → `datagrid-control`). Underscore-prefixed names (`_shared`) are reserved for cross-cutting skills.
 2. **`SKILL.md` frontmatter.** Must contain `name` (the kebab id) and `description`. Write the description in **third person** ("This skill should be used when…") and list concrete trigger phrases: the class name, common synonyms, and the main API method names (e.g. "MxMessageBox", "message box", "show a dialog", "Show", "ShowAsync"). The description is what Claude matches against user intent — be specific.
 3. **Keep `SKILL.md` lean** (target ≤ ~2000 words): identity, namespace/`using`, the public API signatures, enum/value tables, a property table, and 2–3 quick examples. Push everything else into `references/*.md` (progressive disclosure — `SKILL.md` is always loaded when the skill fires; references load only when read).
 4. **Don't duplicate `_shared`.** Reference it ("see the `_shared` skill for theming/localization") instead of restating.
-5. **Verify the namespace.** Eremex source lives under `Source/Eremex.Avalonia.Controls/...` but the runtime namespace is `Eremex.AvaloniaUI.Controls` (`AvaloniaUI`, one word). Confirm the real `using` for each control from its source file before documenting.
-6. **Cite source paths.** Back every API claim with a path into the `controls` repo (e.g. `Source/Eremex.Avalonia.Controls/Common/MessageBox/MxMessageBox.cs`) so Claude can re-verify against ground truth.
+5. **Verify the namespace.** The runtime namespace is `Eremex.AvaloniaUI.Controls` (`AvaloniaUI`, one word) — not the NuGet package name `Eremex.Avalonia.Controls`. Confirm the real `using` for each control from the official docs (`https://eremexcontrols.net/`) or the NuGet package (`https://www.nuget.org/packages/Eremex.Avalonia.Controls`) before documenting.
+6. **Cite public sources only.** Back every API claim with a link to the official docs (`https://eremexcontrols.net/`), the NuGet package (`https://www.nuget.org/packages/Eremex.Avalonia.Controls`), or the demo (`https://github.com/Eremex/controls-demo`). Never use internal source paths.
 
 ## Conventions
 
 - Language: **English**.
 - Description voice: **third person**, present tense.
 - One control = one skill folder; depth in `references/`.
-- Source of truth is always the `controls` repo at `d:\work\eremex\controls\`.
+- Source of truth: official docs (`https://eremexcontrols.net/`) and NuGet packages (`https://www.nuget.org/packages/Eremex.Avalonia.Controls`). Demos: `https://github.com/Eremex/controls-demo`. Themes: `https://github.com/Eremex/controlthemes`.
 
 ## Available skills
 
 | Skill | Control | Covers |
 |-------|---------|--------|
-| `_shared` | (all) | Namespace gotcha, theming, localization, where source/demos live |
+| `_shared` | (all) | Namespace gotcha, theming, localization, where docs/demos live |
 | `mx-messagebox` | `MxMessageBox` | Show/ShowAsync API, enums, examples, customization & nuances |

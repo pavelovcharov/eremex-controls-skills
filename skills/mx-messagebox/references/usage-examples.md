@@ -125,7 +125,7 @@ if (choice == MessageBoxResult.Retry) await ReconnectAsync();
 // Explicit owner → always modal (ShowDialog), parent disabled while open.
 await MxMessageBox.ShowAsync(this, "Hi", "Demo");
 
-// null owner → uses WindowManager active window; modal if one is active.
+// null owner → resolves to the currently active window; modal if one is active.
 await MxMessageBox.ShowAsync(null, "Hi", "Demo");
 
 // Configure-only overload has no 'owner' param; Owner stays null and resolves

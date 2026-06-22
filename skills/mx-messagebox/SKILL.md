@@ -5,7 +5,7 @@ description: The Eremex MxMessageBox modal dialog — how to show messages and c
 
 # MxMessageBox
 
-`MxMessageBox` is a modal message/question dialog for Eremex Avalonia apps. It exposes a **static API** with both synchronous (`Show`) and asynchronous (`ShowAsync`) methods. Source: [MxMessageBox.cs](../../../../controls/Source/Eremex.Avalonia.Controls/Common/MessageBox/MxMessageBox.cs).
+`MxMessageBox` is a modal message/question dialog for Eremex Avalonia apps. It exposes a **static API** with both synchronous (`Show`) and asynchronous (`ShowAsync`) methods. (Docs: `https://eremexcontrols.net/`; package: `https://www.nuget.org/packages/Eremex.Avalonia.Controls`.)
 
 ## Namespace
 
