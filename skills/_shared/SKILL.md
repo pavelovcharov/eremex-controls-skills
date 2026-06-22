@@ -1,6 +1,6 @@
 ---
 name: eremex-controls-shared
-description: Shared concepts for ALL Eremex Avalonia controls — the namespace gotcha, class naming, theming via DeltaDesign/Fluent, pseudoclasses, localization, and where docs/demos live. This skill should be used when a question is about Eremex controls in general (not one specific control), when resolving "which namespace" or "which using", when styling/theming any Eremex control, when adding a localization language, or when locating Eremex control demos and documentation.
+description: Shared concepts for ALL Eremex Avalonia controls — the namespace gotcha, class naming, theming via DeltaDesign, pseudoclasses, localization, and where docs/demos live. This skill should be used when a question is about Eremex controls in general (not one specific control), when resolving "which namespace" or "which using", when styling/theming any Eremex control, when adding a localization language, or when locating Eremex control demos and documentation.
 ---
 
 # Eremex controls — shared concepts
@@ -40,7 +40,6 @@ When a user says "the Eremex message box" / "the grid" / "the docking manager", 
 - Controls derive from Avalonia primitives (typically `TemplatedControl` / `ContentControl` / `Window`). Behavior is in C#; visuals are in XAML control templates shipped by the theme assemblies.
 - Styling/theme comes from theme assemblies:
   - `Eremex.Avalonia.Themes.DeltaDesign` — the primary Eremex theme (default look).
-  - `Eremex.Avalonia.Themes.Fluent` — Fluent-style alternative.
   - Reference the theme in `App.axaml` `<Application.Styles>` so control templates resolve. Without a theme, controls render with no template.
 - State is exposed via **pseudoclasses** in styles (e.g. `:active`, `:readonly`, `:error`, `:pointerover`, `:pressed`, control-specific ones). When customizing appearance, target pseudoclasses rather than hard-coding brushes.
 - To restyle a control, override its control template / styles in your `App.axaml` or a local `Styles.axaml`; use the theme's resources (brushes, sizes) to stay consistent across themes.
@@ -59,7 +58,7 @@ The control source itself is not public. Verify behavior and API against these i
 - **Documentation:** `https://eremexcontrols.net/` — API reference and guides; ground truth for the public API.
 - **NuGet packages:** `https://www.nuget.org/packages/Eremex.Avalonia.Controls` — published assemblies and the contracts/enums they expose.
 - **Demo app:** `https://github.com/Eremex/controls-demo` — runnable examples of controls in a real app.
-- **Themes:** `https://github.com/Eremex/controlthemes` — the DeltaDesign / Fluent theme sources.
+- **Themes:** `https://github.com/Eremex/controlthemes` — the Eremex themes sources.
 - When unsure how a control behaves, check the docs or the NuGet package; prefer them over memory.
 
 ## Related skills
