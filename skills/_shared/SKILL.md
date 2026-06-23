@@ -64,3 +64,4 @@ The control source itself is not public. Verify behavior and API against these i
 ## Related skills
 
 - `mx-messagebox` — `MxMessageBox` dialog API, examples, customization.
+- `dock-manager` — `DockManager` dockable layout: tool windows, document hosts, float/auto-hide, save/restore layout.
