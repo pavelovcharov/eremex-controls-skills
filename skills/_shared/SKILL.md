@@ -63,5 +63,6 @@ The control source itself is not public. Verify behavior and API against these i
 
 ## Related skills
 
+- `datagrid-control` — `DataGridControl` tabular grid: columns/bands, sorting/grouping/filtering, editing, selection, row drag-drop, export.
 - `mx-messagebox` — `MxMessageBox` dialog API, examples, customization.
 - `dock-manager` — `DockManager` dockable layout: tool windows, document hosts, float/auto-hide, save/restore layout.
