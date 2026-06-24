@@ -12,9 +12,21 @@ eremex-controls-skills/
 └── skills/
     ├── _shared/               ← concepts common to ALL Eremex controls
     │   └── SKILL.md
-    └── mx-messagebox/         ← one folder per control
-        ├── SKILL.md           ← lean entry point (API + quick examples)
-        └── references/        ← depth loaded on demand
+    ├── datagrid-control/      ← one folder per control
+    │   ├── SKILL.md           ← lean entry point (API + quick examples)
+    │   └── references/        ← depth loaded on demand
+    │       ├── columns-and-bands.md
+    │       ├── sorting-grouping-filtering.md
+    │       └── data-selection-editing.md
+    ├── dock-manager/
+    │   ├── SKILL.md
+    │   └── references/
+    │       ├── events-commands-customization.md
+    │       ├── layout-and-items.md
+    │       └── serialization.md
+    └── mx-messagebox/
+        ├── SKILL.md
+        └── references/
             ├── usage-examples.md
             └── customization.md
 ```
@@ -54,4 +66,6 @@ Keep future skills uniform. The recipe:
 | Skill | Control | Covers |
 |-------|---------|--------|
 | `_shared` | (all) | Namespace gotcha, theming, localization, where docs/demos live |
+| `datagrid-control` | `DataGridControl` | Tabular grid: GridColumn/GridBand model, sorting/grouping/filtering, in-place editing, single/multiple selection, row drag-drop, fixed columns, summaries, column chooser, search panel, export (XLSX/PDF/CSV), layout serialization |
+| `dock-manager` | `DockManager` | Dockable layout: dock item hierarchy (DockGroup/TabbedGroup/DocumentGroup/DockPane/DocumentPane/FloatGroup/AutoHideGroup), docking operations, document switcher, events/commands, MVVM via ItemsSource, layout serialization |
 | `mx-messagebox` | `MxMessageBox` | Show/ShowAsync API, enums, examples, customization & nuances |
