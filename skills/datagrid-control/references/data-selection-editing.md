@@ -16,7 +16,6 @@ Keyboard navigation follows `grid.NavigationMode` — `Cell` (move through cells
 | `FocusedRowIndex` | Two-way. The focused grid row index (`InvalidRowIndex` = none). |
 | `FocusedColumn` | Two-way. The focused `GridColumn`. |
 | `AutoScrollToFocusedRow` | Keep the focused row in view (default `true`). |
-| `MoveFirstRow()` / `MoveLastRow()` | Move focus to the first/last row. |
 | `MoveNextRow()` / `MovePrevRow(bool allowNavigateToAutoFilterRow = false)` | Move focus up/down. |
 | `MoveNextPage()` / `MovePrevPage()` | Page up/down. |
 | `MoveNextCell()` / `MovePrevCell()` | Cell-level navigation (Tab/Shift+Tab). |
@@ -204,4 +203,4 @@ await grid.CopyToClipboardAsync();
 
 ## Styling notes
 
-Behavior is in C#; the look comes from the theme assemblies (e.g. `Eremex.Avalonia.Themes.DeltaDesign`) via control templates and pseudoclasses. Target pseudoclasses (`:focused`, `:selected`, `:editing`, `:filtered`, `:grouped`, `:readonly`, etc.) rather than hard-coding brushes when restyling rows, cells, and headers. See the `_shared` skill for theming and pseudoclass conventions.
+Behavior is in C#; the look comes from the theme assemblies (e.g. `Eremex.Avalonia.Themes.DeltaDesign`) via control templates and pseudoclasses. Target pseudoclasses (the DeltaDesign grid themes expose at least `:focused` and `:selected`) rather than hard-coding brushes when restyling rows, cells, and headers — and confirm the full pseudoclass set for your theme version against the theme source (`https://github.com/Eremex/controlthemes`). See the `_shared` skill for theming and pseudoclass conventions.

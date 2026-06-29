@@ -1,6 +1,6 @@
 ---
 name: datagrid-control
-description: The Eremex DataGridControl — a high-performance tabular data grid for Avalonia apps (data binding, auto-generated or explicit columns, bands, sorting, grouping with a group panel, column/auto-filter row filtering, cell/row editing with in-place editors, single/multiple row selection, row drag-and-drop reordering, fixed (frozen) columns, best-fit, summaries, column chooser, search panel, and export to XLSX/PDF/CSV/images). This skill should be used when the user asks about DataGridControl, a data grid / table control, grid columns, grid bands, grouping/sorting/filtering in a grid, the auto-filter row, the group panel, row selection in a grid, cell editing in a grid, row drag-and-drop, fixed/frozen grid columns, grid summaries, the column chooser, or exporting grid data. Covers the public API (properties, methods, routed events, commands), the GridColumn / GridBand model, the relevant enums, XAML and C# usage, MVVM binding via ItemsSource/ColumnsSource/BandsSource, and layout serialization/export.
+description: The Eremex DataGridControl — a high-performance tabular data grid for Avalonia apps (data binding, auto-generated or explicit columns, bands, sorting, grouping with a group panel, column/auto-filter row filtering, cell/row editing with in-place editors, single/multiple row selection, row drag-and-drop reordering, fixed (frozen) columns, best-fit, column chooser, search panel, and export to XLSX/PDF/CSV/images). This skill should be used when the user asks about DataGridControl, a data grid / table control, grid columns, grid bands, grouping/sorting/filtering in a grid, the auto-filter row, the group panel, row selection in a grid, cell editing in a grid, row drag-and-drop, fixed/frozen grid columns, the column chooser, or exporting grid data. Covers the public API (properties, methods, routed events, commands), the GridColumn / GridBand model, the relevant enums, XAML and C# usage, MVVM binding via ItemsSource/ColumnsSource/BandsSource, and layout serialization/export.
 ---
 
 # DataGridControl
@@ -13,7 +13,7 @@ description: The Eremex DataGridControl — a high-performance tabular data grid
 
 ```csharp
 using Eremex.AvaloniaUI.Controls.DataGrid;      // DataGridControl, GridColumn, GridBand, GridColumnCollection, GridBandCollection, DataGrid*EventArgs
-using Eremex.AvaloniaUI.Controls.DataControl;   // base members: ColumnBase props, enums, SummaryItem/SummaryItemType, DataControlCommands, InvalidCellValueExceptionEventArgs
+using Eremex.AvaloniaUI.Controls.DataControl;   // base members: ColumnBase props, enums, DataControlCommands, InvalidCellValueExceptionEventArgs
 ```
 
 In XAML:
@@ -56,31 +56,34 @@ Per-column and per-band property tables, bands, fixed columns, and templates are
 
 ## Rows, indexes, and the data model
 
-The grid keeps **two coordinate systems** for rows — keep them straight:
+The grid tracks **three** row coordinates — keep them straight:
 
-- **Source row index** — position in the bound `ItemsSource`.
-- **Visible (row) index** — position on screen, which shifts as rows are **filtered out**, **grouped** (group rows are inserted), or **collapsed**.
+- **`sourceItemIndex`** — the object's position in the bound `ItemsSource`. Stable across sorting/filtering/grouping.
+- **`rowIndex`** — the row's coordinate inside the grid. Data rows are `0`-based; **group rows use negative indexes** (`-1`, `-2`, …). Shifts when rows are sorted/filtered.
+- **`visibleRowIndex`** — the row's on-screen position among the currently visible rows (also changes when groups are collapsed/expanded).
 
-`DataGridControl.InvalidRowIndex` (`int.MinValue`) means "no row".
+Group rows have a `rowIndex` but **no** `sourceItemIndex` (they aren't data rows, so the source-index converters return `-1` for them). `DataGridControl.InvalidRowIndex` (`int.MinValue`) means "no row".
+
+Convert between the three, and read/write cells, with these public methods:
 
 | Method | Returns | Notes |
 |--------|---------|-------|
-| `GetSourceItemIndexByRowIndex(int rowIndex)` | `int` | visible/grid row index → source index. |
-| `GetRowIndexBySourceItemIndex(int sourceItemIndex)` | `int` | source index → visible/grid row index. |
-| `GetSourceItemIndexByVisibleRowIndex(int visibleRowIndex)` | `int` | on-screen visible index → source index. |
-| `GetVisibleRowIndexBySourceItemIndex(int sourceItemIndex)` | `int` | source index → on-screen visible index. |
-| `GetVisibleRowIndexByRowIndex(int rowIndex)` | `int` | grid row index → on-screen visible index. |
-| `GetRowIndexByVisibleRowIndex(int visibleRowIndex)` | `int` | on-screen visible index → grid row index. |
+| `GetSourceItemIndexByRowIndex(int rowIndex)` | `int` | `rowIndex` → `sourceItemIndex` (`-1` for group rows). |
+| `GetRowIndexBySourceItemIndex(int sourceItemIndex)` | `int` | `sourceItemIndex` → `rowIndex`. |
+| `GetSourceItemIndexByVisibleRowIndex(int visibleRowIndex)` | `int` | `visibleRowIndex` → `sourceItemIndex`. |
+| `GetVisibleRowIndexBySourceItemIndex(int sourceItemIndex)` | `int` | `sourceItemIndex` → `visibleRowIndex`. |
+| `GetVisibleRowIndexByRowIndex(int rowIndex)` | `int` | `rowIndex` → `visibleRowIndex`. |
+| `GetRowIndexByVisibleRowIndex(int visibleRowIndex)` | `int` | `visibleRowIndex` → `rowIndex`. |
 | `GetSourceItem(int sourceItemIndex)` | `object?` | The bound object at a source index. |
 | `GetSourceItemByRowIndex(int rowIndex)` / `GetSourceItemByVisibleRowIndex(int)` | `object?` | Bound object by row/visible index. |
 | `GetCellValue(int rowIndex, GridColumn | string fieldName)` | `object?` | Read a cell value. |
 | `SetCellValue(int rowIndex, GridColumn | string fieldName, object? value)` | `void` | Write a cell value. |
 | `GetCellDisplayText(int rowIndex, GridColumn | string fieldName)` | `string?` | Formatted display text of a cell. |
 | `GetSourceItemValue(int sourceItemIndex, GridColumn | string fieldName)` | `object?` | Value straight from the source object. |
-| `FindRowByItem(object? item)` | `int` | Row index holding this source object (`-1` if none). |
-| `FindRowByValue(GridColumn | string fieldName, object? value)` | `int` | First row whose cell equals `value`. |
-| `FindRowByDisplayText(GridColumn | string fieldName, string? displayText)` | `int` | First row whose display text matches. |
-| `IsGroupRow(int rowIndex)` | `bool` | Is this row a group header row? |
+| `FindRowByItem(object? item)` | `int` | `rowIndex` holding this source object (`-1` if none). |
+| `FindRowByValue(GridColumn | string fieldName, object? value)` | `int` | First `rowIndex` whose cell equals `value`. |
+| `FindRowByDisplayText(GridColumn | string fieldName, string? displayText)` | `int` | First `rowIndex` whose display text matches. |
+| `IsGroupRow(int rowIndex)` | `bool` | Is this `rowIndex` a group header row? |
 | `RefreshData()` / `RefreshRow(int rowIndex)` | `void` | Force a data refresh (re-sort/filter) or refresh one row's cells. |
 | `PopulateColumns()` | `void` | (Re)generate columns from the current `ItemsSource` type. |
 
@@ -204,7 +207,6 @@ Fixed columns are set per-column via `GridColumn.FixedMode` (`None` / `Left` / `
 | `CustomColumnGroup` | …same, **`Result`** (`bool?`) | — | Custom grouping comparison. |
 | `CustomGroupValueDisplayText` | `RowIndex`, `Column`, `Value`, `DisplayText` | — | Text for a group row. |
 | `CustomRowFilter` | `SourceItemIndex`, **`Visible`** | — | Decide per row whether it passes the filter. |
-| `CustomSummary` | `SummaryItem`, `RowIndexes`, **`SummaryValue`** | — | Custom summary aggregation. |
 | `StartDrag` | `Items`, `DragRowIndexes`, `Data`, `Effects` | — | A row drag started. |
 | `DragOver` | `Items`, `TargetRowIndex`, `DropPosition`, `KeyModifiers`, `Effects` | — | Drag hovering over a drop target. |
 | `Drop` | `Items`, `TargetRowIndex`, `DropPosition`, `Data`, `Effects` | — | Rows dropped. |
@@ -234,7 +236,6 @@ Event handler patterns (veto an editor, validate a value, custom sort/filter) ar
 | `RowDragMode` | `Row`, `DragHandle` |
 | `DropPosition` | `Before`, `After`, `Inside` |
 | `ColumnHeaderPlacement` | `HeaderPanel`, `GroupPanel`, `ColumnChooser` |
-| `SummaryItemType` | `None`, `Sum`, `Min`, `Max`, `Count`, `Average`, `Custom` |
 
 ## Commands
 

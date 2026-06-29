@@ -60,15 +60,17 @@ dm.DockItemEndFloatDragging   += (_, e) => EndFloatPreview(e.Item);
 
 ### Customize / suppress the context menu
 
-The pane header context menu is cancelable, and you get the `PopupMenu` to mutate it:
+The pane header context menu is cancelable, and you get the `PopupMenu` to mutate it. `PopupMenu.Items` is a collection of Eremex bar items (`ToolbarItem` and subclasses, namespace `Eremex.AvaloniaUI.Controls.Bars`) — not Avalonia `MenuItem`. Use `ToolbarButtonItem` for a clickable entry:
 
 ```csharp
+using Eremex.AvaloniaUI.Controls.Bars;   // ToolbarButtonItem
+
 dm.DockItemContextMenuOpening += (_, e) =>
 {
     if (e.Item is DockPane { AllowClose: false })
         e.Cancel = true;            // no menu for non-closeable panes
     else
-        e.PopupMenu.Items.Add(new MenuItem { Header = "Reveal in tree" });
+        e.PopupMenu.Items.Add(new ToolbarButtonItem { Header = "Reveal in tree" });
 };
 ```
 
@@ -143,14 +145,16 @@ When `AllowDocumentSwitcher` is `true`, holding **Ctrl** and tapping **Tab** ope
 
 ## Restyling: pseudoclasses & template parts
 
-As with all Eremex controls, visuals live in the theme assemblies (`Eremex.Avalonia.Themes.DeltaDesign` is the default). Target **pseudoclasses** rather than hard-coding brushes. Relevant pseudoclasses:
+As with all Eremex controls, visuals live in the theme assemblies (`Eremex.Avalonia.Themes.DeltaDesign` is the default). Target **pseudoclasses** rather than hard-coding brushes. Pseudoclasses used by the DeltaDesign dock themes include:
 
 | Pseudoclass | On | Meaning |
 |-------------|----|---------|
 | `:active` | pane header | the pane is the active pane |
 | `:glyph-before` / `:glyph-after` / `:glyph-hidden` | pane header | glyph placement (`ShowGlyphMode`) |
 | `:top` / `:bottom` / `:left` / `:right` | `DockPane` | tab-strip placement side |
-| `:no-system-chrome` / `:no-border` | `FloatGroup` | custom/borderless float window |
+| `:no-system-chrome` | `FloatGroup` | custom-chrome float window |
+
+> Pseudoclasses and template-part names below are taken from the current DeltaDesign theme and can change between theme versions. Before relying on one in a production style, confirm it against the live theme source (`https://github.com/Eremex/controlthemes`).
 
 Selector examples (in `App.axaml` or a `Styles.axaml`; `do:` is the Docking XAML namespace):
 
@@ -160,22 +164,22 @@ Selector examples (in `App.axaml` or a `Styles.axaml`; `do:` is the Docking XAML
     <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentBrush}" />
 </Style>
 
-<!-- custom background for borderless float windows -->
+<!-- custom background for custom-chrome float windows -->
 <Style Selector="do|FloatGroup:no-system-chrome">
     <Setter Property="Background" Value="..." />
 </Style>
 ```
 
-> The brush resource keys are illustrative — look up the real DeltaDesign keys in the themes sources (`https://github.com/Eremex/controlthemes`) and bind to those so your style tracks the active theme.
+> The brush resource keys are illustrative — look up the real DeltaDesign keys in the themes sources (`https://github.com/Eremex/controlthemes`) and bind to those so your style tracks the active theme. Do not assume a specific resource key is stable across versions.
 
-Template part names you may target (look these up when overriding a control template):
+Template part names you may target when overriding a control template (verify each in the theme source before use):
 
 | Part | Control | Purpose |
 |------|---------|---------|
 | `PART_Tray{Left,Top,Right,Bottom}` | `DockManager` | auto-hide trays per edge |
 | `PART_Pane{Left,Top,Right,Bottom}` | `DockManager` | auto-hide panes per edge |
-| `PART_LayoutRoot` | `DockPane` | root border (target of the `:top/:bottom/...` styles) |
-| `PART_Grid`, `PART_CaptionArea` | `FloatGroup` | float window root + caption |
+| `PART_LayoutRoot` | `DockPane` | root border (target of the `:top/:bottom/:left/:right` styles) |
+| `PART_Grid` | `FloatGroup` | float window root grid (the caption is a `FloatWindowCaptionArea`-classed border, not a `PART_`) |
 | `PART_ExpandButton`, `PART_TransformControl`, `PART_ItemsPresenter` | auto-hide tray | expand button, chevron rotation, items |
 
 To fully retemplate a control, copy the theme's `DockManager.axaml` from the themes sources (`https://github.com/Eremex/controlthemes`) and adapt it; use the theme's resource keys (brushes/sizes) to stay consistent across themes. See the `_shared` skill for the broader theming story.

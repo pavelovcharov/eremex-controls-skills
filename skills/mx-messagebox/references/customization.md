@@ -27,8 +27,8 @@ What happens with each overload:
 
 At show time, the owner resolves to the dialog's `Owner` (if set) or otherwise to the currently active window.
 
-- If an owner resolves → dialog opens **modally** via `ShowDialog(owner)` and inherits the owner's `Icon`.
-- If none resolves → opens non-modally via `Show()` (and may appear in the taskbar if no other window is there). Pass an owner for predictable modal behavior.
+- If an owner resolves → the dialog opens **modally** (the parent stays disabled until it's dismissed) and typically inherits the owner's `Icon`.
+- If none resolves → it opens **non-modally** and may appear in the taskbar. Pass an owner for predictable modal behavior.
 
 ## `ButtonAlignment`
 
@@ -112,6 +112,6 @@ See the `_shared` skill for the broader localization story across all Eremex con
 
 ## Window chrome
 
-- The message window is an `MxWindow` with minimal system decorations (`BorderOnly` on Windows/macOS; full or border on Linux depending on X11 forwarding).
-- The client-area title bar hint is set to 1 — the dialog uses its own compact title strip rather than the OS chrome.
-- The window `Icon` is inherited from the resolved owner.
+The dialog is a themed message window (its look comes from the active Eremex theme, e.g. DeltaDesign) with a compact title strip rather than the full OS chrome. Exact chrome details (decorations, title-bar behavior) are part of the theme implementation and can vary by platform and theme version — confirm the specifics against the themes sources (`https://github.com/Eremex/controlthemes`) and the demo (`https://github.com/Eremex/controls-demo`) rather than relying on a fixed description.
+
+- The window `Icon` typically follows the resolved owner.

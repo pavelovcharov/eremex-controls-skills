@@ -127,7 +127,7 @@ A band groups one or more columns (and/or nested bands) under a shared header, f
 | `BandsSource` | `IEnumerable?` | — | MVVM: generate child bands from a collection. |
 | `HeaderTemplate` / `HeaderHorizontalAlignment` / `HeaderVerticalAlignment` | — | — | Inherited header styling. |
 
-> Place a column in a band either by setting the column's `BandName` to the band's `BandName`, or by nesting. Bands can contain bands, so headers can span multiple rows.
+> A `GridBand`'s `[Content]` is its `Bands` collection — it holds **nested child bands only**, not columns. To place a column under a band, set the column's `BandName` to that band's `BandName`. Bands can contain bands, so headers can span multiple rows.
 
 ## Declaring columns in XAML
 
@@ -143,7 +143,7 @@ A band groups one or more columns (and/or nested bands) under a shared header, f
 
   <!-- Unbound column: computed in code via CustomUnboundColumnData -->
   <dg:GridColumn FieldName="Surcharge" Header="Surcharge"
-                 UnboundDataType="x:Type sys:Decimal" ReadOnly="True"/>
+                 UnboundDataType="{x:Type sys:Decimal}" ReadOnly="True"/>
 
   <!-- A templated column -->
   <dg:GridColumn FieldName="Status" Header="Status">
@@ -172,18 +172,20 @@ grid.CustomUnboundColumnData += (_, e) =>
 
 ## Declaring bands in XAML
 
+Bands live in `DataGridControl.Bands`; each band's `[Content]` is its own `Bands` collection (child bands). Columns are **not** nested inside bands — they stay in the grid's `Columns` and are attached to a band by matching `GridColumn.BandName` to `GridBand.BandName`:
+
 ```xml
 <dg:DataGridControl ItemsSource="{Binding Orders}" AutoGenerateColumns="False" ShowBands="True">
   <dg:DataGridControl.Bands>
     <dg:GridBand Header="Customer">
-      <!-- columns can sit here too, or reference the band by name -->
-      <dg:GridBand Header="Contact">
-        <!-- nested band -->
+      <dg:GridBand Header="Contact">   <!-- nested child band -->
+        <dg:GridBand Header="Primary"/>
       </dg:GridBand>
     </dg:GridBand>
     <dg:GridBand Header="Financial"/>
   </dg:DataGridControl.Bands>
 
+  <!-- Columns attach to a band via BandName (not by nesting) -->
   <dg:GridColumn FieldName="Name"    Header="Name"    BandName="Customer"/>
   <dg:GridColumn FieldName="Email"   Header="Email"   BandName="Contact"/>
   <dg:GridColumn FieldName="Amount"  Header="Amount"  BandName="Financial"/>

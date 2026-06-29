@@ -114,8 +114,8 @@ More copy-paste examples (confirmation flows, retry loops, owner handling) are i
 
 ## Modality note
 
-- With a resolvable **owner**, the dialog opens modally (`ShowDialog`) and disables the parent until dismissed.
-- Without an owner and with no active window, it opens non-modally (`Show`). Pass an `owner` (or ensure a window is active) for a true modal dialog.
+- With a resolvable **owner**, the dialog opens **modally** and disables the parent until dismissed.
+- Without an owner and with no active window, it opens **non-modally**. Pass an `owner` (or ensure a window is active) for a true modal dialog.
 
 ## Related skills
 

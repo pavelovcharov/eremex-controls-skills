@@ -20,7 +20,6 @@ So to use any control:
 
 ```csharp
 using Eremex.AvaloniaUI.Controls;          // MxMessageBox, MxTabControl, … and most enums
-using Eremex.AvaloniaUI.Controls.Internal; // rare — only internal types (avoid)
 ```
 
 Always confirm the exact namespace from the official docs (`https://eremexcontrols.net/`) or the NuGet package (`https://www.nuget.org/packages/Eremex.Avalonia.Controls`) before writing code. Enum types (`MessageBoxButtons`, `MessageBoxIcon`, `MessageBoxResult`, …) generally live in `Eremex.AvaloniaUI.Controls`.
@@ -41,7 +40,7 @@ When a user says "the Eremex message box" / "the grid" / "the docking manager", 
 - Styling/theme comes from theme assemblies:
   - `Eremex.Avalonia.Themes.DeltaDesign` — the primary Eremex theme (default look).
   - Reference the theme in `App.axaml` `<Application.Styles>` so control templates resolve. Without a theme, controls render with no template.
-- State is exposed via **pseudoclasses** in styles (e.g. `:active`, `:readonly`, `:error`, `:pointerover`, `:pressed`, control-specific ones). When customizing appearance, target pseudoclasses rather than hard-coding brushes.
+- State is exposed via **pseudoclasses** in styles (standard ones like `:pointerover`, `:pressed`, `:selected`, plus control-specific ones). When customizing appearance, target pseudoclasses rather than hard-coding brushes. The exact control-specific pseudoclasses live in the theme sources (`https://github.com/Eremex/controlthemes`) — confirm them there before relying on a name.
 - To restyle a control, override its control template / styles in your `App.axaml` or a local `Styles.axaml`; use the theme's resources (brushes, sizes) to stay consistent across themes.
 
 ## Localization

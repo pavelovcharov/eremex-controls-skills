@@ -209,15 +209,15 @@ Float groups are usually auto-created, but if you declare one (or restyle it), t
 
 ## MVVM: ItemsSource & item adapter
 
-Bind `ItemsSource` to a collection and each item is auto-wrapped into a dock container:
+`ItemsSource` is the data side; the container/content are produced by templates. For each item in `ItemsSource`, the manager builds a **container** (a `DockPane`/`DocumentPane`) from `ItemTemplate` and the **content** placed inside it from `ItemContentTemplate`. When `ItemTemplate` is unset the item itself is used as the content inside a default `DockPane`.
 
 ```csharp
-dm.ItemsSource = viewModels;   // each becomes a DockPane added to Root
+dm.ItemsSource = viewModels;          // collection of view-models
+// ItemTemplate      → builds the DockPane/DocumentPane container for each VM
+// ItemContentTemplate → builds the content rendered inside that container
 ```
 
-Default placement rules (the built-in `DefaultItemAdapter`):
-- A generated **document** container (`DocumentPane`) → the first *visible* `DocumentGroup`; if none exists, a `DocumentGroup` is auto-created and added to `Root`.
-- Everything else → added directly to `Root`.
+Where each generated container is placed is decided by an item adapter (`ItemAdapter`, an `IDockManagerItemAdapter`). The built-in default places items into the existing layout; if you generate **documents** (`DocumentPane`), make sure a `DocumentGroup` exists for them to land in (or supply an adapter that creates/routes one) — confirm the exact default placement for your version against the docs (`https://eremexcontrols.net/`) and demo (`https://github.com/Eremex/controls-demo`).
 
 Customize with three properties:
 
@@ -253,7 +253,7 @@ public sealed class MyAdapter : IDockManagerItemAdapter
 
             case DocumentViewModel:
                 var docs = dockManager.GetItems()
-                    .OfType<DocumentGroup>().FirstOrDefault(g => g.ActualIsVisible)
+                    .OfType<DocumentGroup>().FirstOrDefault(g => g.IsVisible)
                     ?? new DocumentGroup();
                 if (docs.DockParent == null) root.Add(docs);
                 docs.Add(dockItem);                       // documents → document host

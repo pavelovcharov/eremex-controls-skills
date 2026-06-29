@@ -106,7 +106,7 @@ Full per-type property tables are in [layout-and-items.md](references/layout-and
 | `AllowFreeDocumentLayout` | `bool` | `false` | Allow documents outside a document host. |
 | `OwnsFloatingDockPanes` | `bool` | `true` | Manager owns lifetime of floating *dock* panes. |
 | `OwnsFloatingDocuments` | `bool` | `true` | Manager owns lifetime of floating *documents*. |
-| `ItemsSource` | `IList?` | — | MVVM source; items auto-wrap into dock items (see below). |
+| `ItemsSource` | `IList?` | — | MVVM data collection; templates build a container per item (see below). |
 | `ItemAdapter` | `IDockManagerItemAdapter?` | — | Custom placement logic for generated items. |
 | `ItemTemplate` | `IDataTemplate?` | — | Container template for `ItemsSource` items. |
 | `ItemContentTemplate` | `IDataTemplate?` | — | Content template for generated items. |
@@ -261,13 +261,13 @@ dm.SaveLayout(stream, new SerializationSettings { Mode = SerializationMode.Json 
 
 ## MVVM with ItemsSource
 
-Bind a collection and items are auto-wrapped into dock containers:
+`ItemsSource` supplies the data collection; for each item the manager builds a **container** (`DockPane`/`DocumentPane`) from `ItemTemplate` and the **content** from `ItemContentTemplate`:
 
 ```csharp
-dm.ItemsSource = myToolViewModels;   // each item becomes a DockPane added to Root
+dm.ItemsSource = myToolViewModels;   // each VM → a container + content built by the templates
 ```
 
-By default, generated **documents** (`DocumentPane`) go into the first visible `DocumentGroup` (one is auto-created if absent); everything else goes into `Root`. Customize placement with `ItemAdapter` (an `IDockManagerItemAdapter`), and the container/content templates with `ItemTemplate` / `ItemContentTemplate`. See [layout-and-items.md](references/layout-and-items.md#mvvm-itemssource--item-adapter).
+Where each generated container lands is decided by `ItemAdapter` (an `IDockManagerItemAdapter`); the built-in default places items into the existing layout. If you generate documents, ensure a `DocumentGroup` exists (or supply an adapter that routes to one). See [layout-and-items.md](references/layout-and-items.md#mvvm-itemssource--item-adapter).
 
 ## Commands
 

@@ -4,7 +4,7 @@ How rows get ordered, grouped, and filtered in `DataGridControl`: the sorted-col
 
 ```csharp
 using Eremex.AvaloniaUI.Controls.DataGrid;
-using Eremex.AvaloniaUI.Controls.DataControl;   // enums, SummaryItem
+using Eremex.AvaloniaUI.Controls.DataControl;   // enums
 ```
 
 ## Sorting
@@ -139,17 +139,6 @@ grid.CustomRowFilter += (_, e) =>
 
 `e.SourceItemIndex` is the index in `ItemsSource`; set `e.Visible` to keep or drop the row.
 
-### Unique values / filter items
-
-The data controller exposes the value lists the popups use:
-
-| Method | Returns |
-|--------|---------|
-| `DataController.GetColumnFilterItems(fieldName, getAllSourceValues, roundDateTime, filterByDisplayText)` | `IEnumerable<ColumnFilterItem>` |
-| `DataController.GetColumnUniqueValues(fieldName)` | distinct values for a field |
-
-(These live on the internal data controller; prefer the column/auto-filter properties above for everyday use.)
-
 ## Search panel
 
 A built-in find-as-you-type panel (`grid.SearchPanelDisplayMode`):
@@ -165,29 +154,7 @@ A built-in find-as-you-type panel (`grid.SearchPanelDisplayMode`):
 
 ## Summaries
 
-Aggregate values shown in group rows and the total footer. A `SummaryItem` describes one aggregate:
-
-| `SummaryItem` property | Notes |
-|------------------------|-------|
-| `FieldName` | The field to aggregate. |
-| `SummaryType` | `Sum`, `Min`, `Max`, `Count`, `Average`, `Custom`, `None`. |
-| `ShowInColumn` | Which column's footer/summary cell displays the result. |
-| `IsCustom` | `true` when `SummaryType == Custom`. |
-
-For a **custom** aggregate, handle `grid.CustomSummary` and set `e.SummaryValue`:
-
-```csharp
-grid.CustomSummary += (_, e) =>
-{
-    if (e.SummaryItem.SummaryType != SummaryItemType.Custom) return;
-    decimal sum = 0;
-    foreach (var idx in e.RowIndexes)
-        sum += (decimal)grid.GetSourceItemValue(idx, e.SummaryItem.FieldName)!;
-    e.SummaryValue = sum;
-};
-```
-
-> `e.RowIndexes` are the source indexes covered by the summary (all rows for a total summary, or a group's rows for a group summary). Built-in types (`Sum`/`Count`/`Min`/`Max`/`Average`) are computed automatically — only `Custom` needs the handler.
+The library ships public types for grid aggregates — `SummaryItem` (with `FieldName`, `SummaryType`, `ShowInColumn`, `IsCustom`) and the `SummaryItemType` enum (`None`, `Sum`, `Min`, `Max`, `Count`, `Average`, `Custom`). The exact way summaries are attached to a grid (the summary collections and the custom-aggregation event) is not part of the documented public surface in the current package version, so confirm the supported configuration path — and whether a custom-summary hook is exposed — against the official docs (`https://eremexcontrols.net/`) and the demo (`https://github.com/Eremex/controls-demo`) before relying on it.
 
 ## Save / restore (sorting, grouping, filtering)
 
